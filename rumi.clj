@@ -22,8 +22,7 @@
            (let [font (new QFont)]
              (.setWeight font (.. QFont$Weight Bold value))
              (.setFont painter font))
-           (let [color QColor/red]
-             (.setPen painter (new QPen color)))
+           (.setPen painter (new QPen (new QColor (tile-data :color))))
 
            (.drawRoundedRect painter 0 0 40 40 5 5)
 
@@ -40,7 +39,7 @@
   (qt4
    (let [app (QCoreApplication/instance)
          rumi-canvas (new QGraphicsView (new QGraphicsScene))
-         rumi-tile (tile { :number 5 })]
+         rumi-tile (tile { :number 5 :color "blue" })]
 
      (.. rumi-canvas scene (addItem rumi-tile))
      (.show rumi-canvas))))
