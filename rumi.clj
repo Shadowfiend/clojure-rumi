@@ -33,7 +33,7 @@
                         (.boundingRect this)
                         (.toString (tile-data :number))
                         option)))
-    (boundingRect [] (new QRectF 0 0 40 40))))
+    (boundingRect [] (new QRectF 0 0 50 50))))
 
 (defn start []
   (qt4
