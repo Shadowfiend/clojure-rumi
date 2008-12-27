@@ -1,7 +1,8 @@
-; Rumikube contains four colors, denoted herein by the symbols :blue, :red, :orange, and :black. In addition, it contains twelve numbers, numbered from one to twelve.
+(ns rumi-logic)
+; Rumikube contains four colors, denoted herein by the symbols :blue, :red, :orange, and :black. In addition, it contains thirteen numbers, numbered from one to twelve.
 
 (def colors '(:blue :red :orange :black))
-(def numbers (range 0 14))
+(def numbers (range 1 14))
 
 
 ; The methods to generate the tiles:
