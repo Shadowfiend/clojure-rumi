@@ -64,10 +64,27 @@
   [tile-list]
   (are-sorted-tiles-sequential? (sort-by tile-number-for tile-list)))
 
+(defn colors-are-unique?
+  "Returns true if each of the tiles in the list has a unique color, false otherwise. If a list of colors is passed, this method returns true if each of the tiles in the list has a unique color not contained in the passed list, and false otherwise."
+  ([tile-list]
+              (colors-are-unique? tile-list '()))
+  ([tile-list color-list]
+              (let [num-tiles (count tile-list)
+                    color-vector (vec color-list)
+                    current-color ((first tile-list) :color)]
+                (if (= 0 num-tiles)
+                  true
+                  (if (< (count colors) num-tiles)
+                    false
+                    (if (< 0 (. color-list (indexOf current-color)))
+                      false
+                      (recur (rest tile-list)
+                             (cons current-color color-list))))))))
+
 
 (defn is-valid-combination? 
   "Returns true if the tiles contained in the list represent a valid combination of tiles, and false otherwise. Note that the tiles are assumed to be valid individual tiles." 
   [tile-list]
   (if (are-of-same-color? tile-list)
     (are-tiles-sequential? tile-list)
-    (have-same-number? tile-list)))
+    (and (have-same-number? tile-list) (colors-are-unique? tile-list))))
