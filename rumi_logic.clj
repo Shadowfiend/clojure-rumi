@@ -70,13 +70,15 @@
               (colors-are-unique? tile-list '()))
   ([tile-list color-list]
               (let [num-tiles (count tile-list)
-                    color-vector (vec color-list)
-                    current-color ((first tile-list) :color)]
+                    current-color (get (first tile-list) :color)]
                 (if (= 0 num-tiles)
                   true
                   (if (< (count colors) num-tiles)
                     false
-                    (if (< 0 (. color-list (indexOf current-color)))
+                    (if (and
+                          (not (= 0 (count color-list)))
+                          (< (- 1) (. (vec color-list)
+                                  (indexOf current-color))))
                       false
                       (recur (rest tile-list)
                              (cons current-color color-list))))))))

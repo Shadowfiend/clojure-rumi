@@ -65,6 +65,46 @@
             (create-valid-tile-list-with-same-color
               color number-2 (+ base-number number-1 1)))))
 
+(defn create-colors-set
+  "Creates a set of colors. The parameter version of this method is not intended for use outside the method itself."
+  ([]
+    (create-colors-set 4 '()))
+  ([num-colors color-list]
+               (if (= 0 num-colors)
+                 (set color-list)
+                 (recur (- num-colors 1)
+                        (cons (nth colors (rand-int 3)) color-list)))))
+
+(defn random-valid-tile-list-with-same-number
+  "Creates a valid list of tiles with the same number. A valid list does not have a repeated color."
+  ([]
+    (random-valid-tile-list-with-same-number (create-colors-set) 
+                                             (+ 1 (rand-int 13))
+                                             '()))
+  ([color-set number tile-list]
+              (if (= 0 (count color-set))
+                tile-list
+                (recur (rest color-set)
+                       number
+                       (cons (tile (first color-set) number)
+                             tile-list)))))
+
+(defn random-invalid-tile-list-with-same-number
+  "Creates an invalid list of tiles with the same number. An invalid list contains at least one repeated color"
+  []
+  (let [valid-list (random-valid-tile-list-with-same-number)
+        split-point (rand-int (+ 1 (count valid-list)))
+        double-tile (nth valid-list (rand-int (count valid-list)))
+        new-tile (tile (get double-tile :color)
+                       (get double-tile :number))]
+    (concat (take split-point valid-list)
+            (list new-tile)
+            (drop split-point valid-list))))
+
+(defn invalid-tile-list-seq
+  "Creates a non-random seq containing one invalid tile list."
+  []
+  (seq (list (list (tile :red 1) (tile :blue 2)))))
 
 ; The actual tests.
 
@@ -74,6 +114,18 @@
 
 (fact "groups of the same color and non-sequential numbers are invalid."
       [x (create-seq random-invalid-tile-list-with-same-color)]
+      (not (is-valid-combination? x)))
+
+(fact "groups of the same number and non-repeated colors are valid"
+      [x (create-seq random-valid-tile-list-with-same-number)]
+      (is-valid-combination? x))
+
+(fact "groups of the same number with repeated colors are invalid"
+      [x (create-seq random-invalid-tile-list-with-same-number)]
+      (not (is-valid-combination? x)))
+
+(fact "a group with differeing colors and numbers is invalid"
+      [x (invalid-tile-list-seq)]
       (not (is-valid-combination? x)))
 
 (print-color-results (verify-facts 'rumi-logic-test))
