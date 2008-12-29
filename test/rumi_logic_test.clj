@@ -75,10 +75,10 @@
                  (recur (- num-colors 1)
                         (cons (nth colors (rand-int 3)) color-list)))))
 
-(defn random-valid-tile-list-with-same-number
-  "Creates a valid list of tiles with the same number. A valid list does not have a repeated color."
+(defn valid-tile-list-with-same-number
+  "Creates a valid list of tiles with the same number and the given color set. A valid list does not have a repeated color. If called without parameters, this function creates an random list."
   ([]
-    (random-valid-tile-list-with-same-number (create-colors-set) 
+    (valid-tile-list-with-same-number (create-colors-set) 
                                              (+ 1 (rand-int 13))
                                              '()))
   ([color-set number tile-list]
@@ -92,7 +92,7 @@
 (defn random-invalid-tile-list-with-same-number
   "Creates an invalid list of tiles with the same number. An invalid list contains at least one repeated color"
   []
-  (let [valid-list (random-valid-tile-list-with-same-number)
+  (let [valid-list (valid-tile-list-with-same-number)
         split-point (rand-int (+ 1 (count valid-list)))
         double-tile (nth valid-list (rand-int (count valid-list)))
         new-tile (tile (get double-tile :color)
@@ -117,7 +117,7 @@
       (not (is-valid-combination? x)))
 
 (fact "groups of the same number and non-repeated colors are valid"
-      [x (create-seq random-valid-tile-list-with-same-number)]
+      [x (create-seq valid-tile-list-with-same-number)]
       (is-valid-combination? x))
 
 (fact "groups of the same number with repeated colors are invalid"
@@ -127,5 +127,33 @@
 (fact "a group with differeing colors and numbers is invalid"
       [x (invalid-tile-list-seq)]
       (not (is-valid-combination? x)))
+
+(fact "add-to-tile-list called with a tile as the argument returns a list with that tile as the sole content"
+      [x (seq (list (tile :blue 1)))]
+      (= 1 (count (add-tile-to-list x))))
+
+(fact "adding a tile with appropriate number and of a unique color to a valid set of tiles of the same number should return a tile list with one more element."
+      [x (seq (list (valid-tile-list-with-same-number #{:blue :red} 1 '())))
+       y (seq (list (tile :orange 1)
+                    (tile :black 1)))]
+      (= 1 (- (count (add-tile-to-list y x)) (count x))))
+
+(fact "adding  an inappropriate tile to a valid set of tiles of the same number should return nil."
+      [x (seq (list (valid-tile-list-with-same-number #{:blue :red} 1 '())))
+       y (seq (list (tile :blue 1)
+                    (tile :orange 2)))]
+      (nil? (add-tile-to-list y x)))
+
+(fact "adding a tile with a sequential number and of the appropriate color to a valid set of tiles of the same color should return a tile list with one more element."
+      [x (seq (list (create-valid-tile-list-with-same-color :blue 3 2)))
+       y (seq (list (tile :blue 2)
+                    (tile :blue 6)))]
+      (= 1 (- (count (add-tile-to-list y x)) (count x))))
+
+(fact "adding a non-appropriate tile (either a non-sequential number or the wrong color) to a valid set of tiles of the same color should return nil."
+      [x (seq (list (create-valid-tile-list-with-same-color :blue 3 2)))
+       y (seq (list (tile :blue 1)
+                    (tile :orange 6)))]
+      (nil? (add-tile-to-list y x)))
 
 (print-color-results (verify-facts 'rumi-logic-test))

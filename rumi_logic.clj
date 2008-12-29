@@ -90,3 +90,14 @@
   (if (are-of-same-color? tile-list)
     (are-tiles-sequential? tile-list)
     (and (have-same-number? tile-list) (colors-are-unique? tile-list))))
+
+
+(defn add-tile-to-list
+  "Adds the given tile to the list, if possible, and returns the new list, or nil if no modifications were made. If no list is provided, a new list is created with the given tile as the sole element. This is always guaranteed to return a list."
+  ([tile]
+         (list tile))
+  ([tile tile-list]
+         (let [new-list (cons tile tile-list)]
+           (if (is-valid-combination? new-list)
+             new-list
+             nil))))
