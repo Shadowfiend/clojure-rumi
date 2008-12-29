@@ -87,9 +87,11 @@
 (defn is-valid-combination? 
   "Returns true if the tiles contained in the list represent a valid combination of tiles, and false otherwise. Note that the tiles are assumed to be valid individual tiles." 
   [tile-list]
-  (if (are-of-same-color? tile-list)
-    (are-tiles-sequential? tile-list)
-    (and (have-same-number? tile-list) (colors-are-unique? tile-list))))
+  (if (> 3 (count tile-list))
+    false
+    (if (are-of-same-color? tile-list)
+      (are-tiles-sequential? tile-list)
+      (and (have-same-number? tile-list) (colors-are-unique? tile-list)))))
 
 
 (defn add-tile-to-list

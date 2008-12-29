@@ -49,7 +49,7 @@
   "Creates a valid list of tiles with the same color, i.e. a list of tiles with the same :color attribute and sequential :number attributes. The list may or may not be sorted by :number attribute."
   []
   (let [color (nth colors (rand-int 3))
-        number (+ 1 (rand-int 12))
+        number (+ 3 (rand-int 10))
         base-number (rand-int (- 13 number))]
     (create-valid-tile-list-with-same-color color number base-number)))
 
@@ -66,14 +66,13 @@
               color number-2 (+ base-number number-1 1)))))
 
 (defn create-colors-set
-  "Creates a set of colors. The parameter version of this method is not intended for use outside the method itself."
-  ([]
-    (create-colors-set 4 '()))
-  ([num-colors color-list]
-               (if (= 0 num-colors)
-                 (set color-list)
-                 (recur (- num-colors 1)
-                        (cons (nth colors (rand-int 3)) color-list)))))
+  "Creates a set of colors, consisting of at least three distinct colors." 
+  []
+    (let [element-to-remove (rand-int 5)]
+      (if (= 0 element-to-remove)
+        colors
+        (filter (fn [x] (not (= x (nth colors (- element-to-remove 1)))))
+                colors))))
 
 (defn valid-tile-list-with-same-number
   "Creates a valid list of tiles with the same number and the given color set. A valid list does not have a repeated color. If called without parameters, this function creates an random list."
