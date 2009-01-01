@@ -1,28 +1,33 @@
 (ns rumi-logic)
-; Rumikube contains four colors, denoted herein by the symbols :blue, :red, :orange, and :black. In addition, it contains thirteen numbers, numbered from one to twelve.
+; Rumikube contains four colors, denoted herein by the symbols :blue, :red,
+; :orange, and :black. In addition, it contains thirteen numbers, numbered from
+; one to thirteen
 
 (def colors '(:blue :red :orange :black))
 (def numbers (range 1 14))
 
+;------------------------- Tile Generation Functions -------------------------;
+(defn generate-tiles-with-color
+  ([color number-list] (generate-tiles-with-color color number-list '()))
+  ([color number-list tile-list]
+      (if (= 0 (count number-list))
+        (tile-list)
+        (recur color 
+               (rest number-list) 
+               (cons {:color color :number (first number-list) :wildcard false}
+                     tile-list)))))
 
-; The methods to generate the tiles:
-;
-(defn generate-tiles-with-color [color number-list trace-list]
-  (if (= 0 (count number-list))
-    (cons {:wildcard :true} (cons {:wildcard :true} trace-list))
-    (recur color 
-           (rest number-list) 
-           (cons {:color color :number (first number-list) :wildcard :false}
-                 trace-list))))
 
-
-(defn generate-tiles [color-list number-list trace-list]
-  (if (= 0 (count color-list))
-    trace-list
-    (recur (rest color-list) 
-           number-list 
-           (generate-tiles-with-color (first color-list) 
-                                      number-list trace-list))))
+(defn generate-tiles
+  ([color-list number-list] (generate-tiles color-list number-list '()))
+  ([color-list number-list tile-list]
+      (if (= 0 (count color-list))
+        (concat '({:wildcard true} {:wildcard true}) tile-list)
+        (recur (rest color-list) 
+               number-list
+               (concat tile-list
+                       (generate-tiles-with-color
+                         (first color-list) number-list))))
 
 (defn have-same-attribute?
   "Returns true if all the tiles contained in the list have the same passed attribute, and false otherwise."
